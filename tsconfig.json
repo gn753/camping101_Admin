@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"], //ts파일을 js로 컴파일 할 때 포함될 라이브러리의 목록
+    "allowJs": true, //타입스크립트 환경에서 ts,tsx대신 js파일 사용 허용.
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true, //파일 이름에 일관된 대소문자 구분 적용
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true, // json 허용
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "noImplicitAny": true, //any 타입으로 암시한 표현식과 선언에 오류를 발생시킵니다.
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "jsxImportSource": "@emotion/react", // emotion 허용
+    "paths": {
+      "@/*": ["/*"],
+      "@pages/*": ["/pages/*"],
+      "@features/*": ["/features/*"],
+      "@components/*": ["/components/*"],
+      "@types/*": ["/types/*"],
+      "@styles/*": ["/styles/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.js"],
+  "exclude": ["node_modules"]
+}
