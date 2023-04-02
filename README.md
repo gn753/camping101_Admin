@@ -17,6 +17,6 @@
 ### 2.  라이브러리 목록
 - emotion : css in js 
 - nanoid: react map함수에서 랜덤 key값을 생성 
-- axios :
+- axios : HTTP 비동기 통신 라이브러리
 - eslin : 에어비앤비 스타일가이드
-
+- antd :  admin 디자인 라이브러리
