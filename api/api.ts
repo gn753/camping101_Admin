@@ -1,3 +1,3 @@
-import axios from "axios";
+import axios from 'axios';
 export const axiosSetting = axios.create();
-axiosSetting.defaults.baseURL = "http://52.78.245.43:8080/v2";
+axiosSetting.defaults.baseURL = 'http://52.78.245.43:8080/';

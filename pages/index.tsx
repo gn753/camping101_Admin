@@ -1,18 +1,36 @@
-import Head from "next/head";
-import Layout from "components/layouts/Layout";
-import Header from "components/layouts/Header";
-import Footer from "components/layouts/Footer";
-import Admin from "features/Admin";
+import { useRouter } from 'next/router';
 
+import { useEffect } from 'react';
+import { axiosSetting } from 'api/api';
+const redirectTo = '/';
 
-function HomePage() {
-  return (
-    <>
-      <Head>ds</Head>
+const Index = () => {
+  useEffect(() => {
+    api();
+  }, []);
 
-      <Layout header={<Header />} footer={<Footer />} main={<Admin />} />
-    </>
-  );
-}
+  const api = async () => {
+    try {
+      const res = await axiosSetting.get(`/api/admin/member?memberType=ADMIN`);
+      console.log(res, '성공');
+    } catch (err) {
+      console.log(err, '옴?');
+    }
+  };
 
-export default HomePage;
+  if (typeof window !== 'undefined') {
+    const router = useRouter();
+    router.push(redirectTo);
+  }
+  return <>메인입니다</>;
+};
+
+// Index.getInitialProps = async ({ ctx }: any) => {
+//   if (ctx && ctx.req) {
+//     ctx.res.statusCode = 302;
+//     ctx.res.setHeader('Location', redirectTo);
+//   }
+//   return { props: '' };
+// };
+
+export default Index;
