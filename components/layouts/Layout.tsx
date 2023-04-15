@@ -1,12 +1,6 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'types';
-import React, {
-  useState,
-  FunctionComponent,
-  SetStateAction,
-  Dispatch,
-  useEffect,
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu, MenuProps } from 'antd';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -29,8 +23,7 @@ interface Router extends NextRouter {
 
 interface Props extends WithRouterProps {
   router: ReactNode;
-  isLogin: boolean;
-  setIsLogin: SetterOrUpdater<boolean>;
+  jwt: null | undefined | string;
 }
 
 const { Header, Content, Footer, Sider }: LayoutProps = Layout;
@@ -44,22 +37,39 @@ const menuItems: MenuProps['items'] = [
     label: <Link href='/userService'>회원서비스</Link>,
     key: '/userService',
   },
+  {
+    label: <Link href='/camp'>캠핑장 관리</Link>,
+    key: '/camp',
+  },
+  {
+    label: <Link href='/camplog'>캠프로그</Link>,
+    key: '/camplog',
+  },
+  {
+    label: <Link href='/tag'>추천태그</Link>,
+    key: '/tag',
+  },
 ];
 
 export default function MenuLayout(props: React.PropsWithChildren<Props>) {
   const [current, setCurrent] = useState('/');
   const router = useRouter();
+  const [jwt, setJwt] = useState('');
   const onMenu: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);
   };
   useEffect(() => {
-    if (!props.isLogin) {
+    if (jwt === '') {
       router.push('/login');
+      return;
     }
-  }, [props.isLogin]);
+    const localStorageData: any = localStorage.getItem('jwt');
+    setJwt(localStorageData);
+  }, [jwt]);
+
   return (
-    <Layout>
-      {props.isLogin === false ? null : (
+    <>
+      <Layout>
         <Sider
           width={170}
           style={{
@@ -80,32 +90,12 @@ export default function MenuLayout(props: React.PropsWithChildren<Props>) {
             mode='inline'
           />
         </Sider>
-      )}
-      {props.isLogin === false ? (
-        <Layout className='site-layout' style={{ marginLeft: 0 }}>
-          {/* <Header
-          className='site-layout-background'
-          style={{ padding: 0, backGround: '#ffffff' }}
-        /> */}
-          {/* 본문*/}
 
-          <Content
-            className='site-layout-background'
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              height: '100vh',
-            }}
-          >
-            {props.children}
-          </Content>
-        </Layout>
-      ) : (
         <Layout className='site-layout' style={{ marginLeft: 200 }}>
           {/* <Header
-        className='site-layout-background'
-        style={{ padding: 0, backGround: '#ffffff' }}
-      /> */}
+  className='site-layout-background'
+  style={{ padding: 0, backGround: '#ffffff' }}
+/> */}
           {/* 본문*/}
 
           <Content
@@ -132,8 +122,8 @@ export default function MenuLayout(props: React.PropsWithChildren<Props>) {
             캠핑101
           </Footer>
         </Layout>
-      )}
-    </Layout>
+      </Layout>
+    </>
   );
 }
 

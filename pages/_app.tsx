@@ -4,26 +4,39 @@ import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 import type { AppProps } from 'next/app';
 import { global } from 'styles/global';
 import theme from 'styles/theme';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { isLoginAtom } from 'atom/loginAtom';
-
-const Layout = dynamic(() => import('components/layouts/Layout'), {
-  ssr: false,
-});
+import Login from './login';
+import Layout from '../components/layouts/Layout';
+// const Layout = dynamic(() => import('components/layouts/Layout'), {
+//   ssr: false,
+// });
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(false);
+  const [jwt, setJwt] = useState(null);
+
+  useEffect(() => {
+    if (jwt === null) {
+      router.push('/login');
+    }
+    const localStorageData: any = localStorage.getItem('jwt');
+    setJwt(localStorageData);
+  }, [router.pathname]);
 
   return (
     <RecoilRoot>
       <ThemeProvider theme={theme}>
         <Global styles={global} />
-        <Layout router={undefined} isLogin={isLogin} setIsLogin={setIsLogin}>
-          <Component {...pageProps} isLogin={isLogin} setIsLogin={setIsLogin} />
-        </Layout>
+        {jwt === null ? (
+          <Component {...pageProps} jwt={jwt} />
+        ) : (
+          <Layout router={undefined} jwt={jwt}>
+            <Component {...pageProps} jwt={jwt} />
+          </Layout>
+        )}
       </ThemeProvider>
     </RecoilRoot>
   );

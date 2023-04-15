@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 import { Table, Button, Row, message } from 'antd';
+import { axiosSetting } from 'api/api';
 import moment from 'moment';
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 const { Column } = Table;
 type CrudProps = {
   type: string;
@@ -12,6 +14,26 @@ export default function UserInfo() {
   const CRUD = async ({ type, data }: CrudProps) => {};
   const [select, setSelect] = useState([]);
   const [userData, setUserData] = useState([]);
+
+  useEffect(() => {
+    api();
+  }, []);
+
+  const api = async () => {
+    const member = memberType === '일반' ? 'CUSTOMER' : 'OWNER';
+    console.log(member);
+
+    try {
+      const res = await axiosSetting.get(
+        `api/admin/member?memberType=${member}&pageNumber=1&recordSize=1`
+      );
+      console.log(res, '성공');
+      setUserData(userData);
+    } catch (err) {
+      console.log(err, '옴?');
+    }
+  };
+
   return (
     <>
       {' '}

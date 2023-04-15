@@ -1,45 +1,81 @@
 import { Form, Input, Button, Row, Col } from 'antd';
 import styled from '@emotion/styled';
 import { axiosSetting } from '../../api/api';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import axios from 'axios';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { SetterOrUpdater } from 'recoil';
 import { useRouter } from 'next/router';
 type LoginType = {
   email: string;
   password: string;
+  memberType?: string;
 };
 
 interface Props {
-  isLogin: boolean;
-  setIsLogin: Dispatch<SetStateAction<boolean>>;
+  jwt: undefined | null | string;
 }
-
-const Login = ({ isLogin, setIsLogin }: Props) => {
+const url = 'api/signin/mail';
+const Login = ({ jwt }: Props) => {
   const router = useRouter();
+  const [selectedType, setSelectedType] = useState<string>('주인');
   useEffect(() => {
-    if (!isLogin) return;
-    if (isLogin) {
+    if (!jwt) return;
+    if (jwt) {
       router.push('/');
     }
-  }, [isLogin]);
+  }, [jwt]);
   const onSubmit = async (body: LoginType) => {
-    console.log(body);
+    if (jwt) return;
+    // 멤버 타입 설정 변수
+    const memberTypeVlue = selectedType === '주인' ? 'OWNER' : 'ADMIN';
+    // body post 데이터 객체
+    const loginData = {
+      ...body,
+      // memberType: memberTypeVlue,
+    };
+    console.log(loginData);
+    //const url = `api/signin/mail?email=${loginData.email}&memberType=${loginData.memberType}&password=${loginData.password}`;
     await axiosSetting
-      .post('/api/signin/mail', body)
-      .then((e) => {
-        setIsLogin(true);
+      .post(url, body)
+      .then((e: any) => {
+        console.log(e, '성공');
+        const jwtData = {
+          access_token: e.headers.access_token,
+          refresh_token: e.headers.refresh_token,
+        };
+        localStorage.setItem('jwt', JSON.stringify(jwtData));
+        // localStorage.setItem('re_jwt', e.headers.refresh_token);
         router.push('/');
       })
       .catch((e) => {
         console.log(e);
-        setIsLogin(false);
+
         router.push('/login');
       });
+  };
+
+  const hanldeClick = (text: '주인' | '관리자') => {
+    setSelectedType(text);
   };
 
   return (
     <LoginLayout>
       <FormTitle>캠핑 101 어드민</FormTitle>
+      <MemberTypeBox>
+        <MemberDiv
+          selected={selectedType.includes('주인')}
+          onClick={() => hanldeClick('주인')}
+        >
+          주인
+        </MemberDiv>
+
+        <MemberDiv
+          selected={selectedType.includes('관리자')}
+          onClick={() => hanldeClick('관리자')}
+        >
+          관리자
+        </MemberDiv>
+      </MemberTypeBox>
       <Row
         justify='center'
         align='middle'
@@ -93,18 +129,38 @@ const Login = ({ isLogin, setIsLogin }: Props) => {
   );
 };
 
-export const LoginLayout = styled.div`
+const LoginLayout = styled.div`
   width: 100%;
   height: auto;
   margin: 0 auto;
   padding-top: 100px;
 `;
-export const FormTitle = styled.div`
+const FormTitle = styled.div`
   width: 100%;
   text-align: center;
   font-size: 30px;
   font-weight: 700;
   margin: 10px auto;
+`;
+const MemberTypeBox = styled.div`
+  width: 100%;
+  margin: 20px auto;
+  text-align: center;
+
+  div {
+    display: inline-block;
+    cursor: pointer;
+    margin: 0 20px;
+    font-size: 20px;
+  }
+`;
+
+interface MemberDivProps {
+  selected: boolean;
+}
+
+const MemberDiv = styled.div<MemberDivProps>`
+  font-weight: ${(props) => (props.selected ? '700' : '400')};
 `;
 
 export default Login;
