@@ -11,13 +11,13 @@ type LoginType = {
   memberType?: string;
 };
 
-interface Props {
+interface JwtProps {
   jwt: undefined | null | string;
 }
 const url = 'api/signin/mail';
-const Login = ({ jwt }: Props) => {
+const Login = ({ jwt }: JwtProps) => {
   const router = useRouter();
-  const [selectedType, setSelectedType] = useState<string>('주인');
+  const [selectedType, setSelectedType] = useState<string>('');
   useEffect(() => {
     if (!jwt) return;
     if (jwt) {
@@ -26,8 +26,9 @@ const Login = ({ jwt }: Props) => {
   }, [jwt]);
   const onSubmit = async (body: LoginType) => {
     if (jwt) return;
+    if (selectedType === '') return alert('주인 혹은 관리자를 선택해주세요');
     // 멤버 타입 설정 변수
-    const memberTypeVlue = selectedType === '주인' ? 'OWNER' : 'ADMIN';
+    // const memberTypeVlue = selectedType === '주인' ? 'OWNER' : 'ADMIN';
     // body post 데이터 객체
     const loginData = {
       ...body,
@@ -44,6 +45,7 @@ const Login = ({ jwt }: Props) => {
           refresh_token: e.headers.refresh_token,
         };
         localStorage.setItem('jwt', JSON.stringify(jwtData));
+        localStorage.setItem('member', selectedType);
         // localStorage.setItem('re_jwt', e.headers.refresh_token);
         router.push('/');
       })

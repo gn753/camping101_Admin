@@ -56,6 +56,9 @@ export default function Editor({ modalData, setModalData }: props) {
   const [initialValues, setInitialValues] = useState({
     ...modalData.data,
   });
+
+  const userJwt: any = localStorage.getItem('jwt');
+  const { access_token, refresh_token } = JSON.parse(userJwt);
   console.log(initialValues, '상담1');
   const [tag, setTag] = useState(initialValues.recTags);
   const onSubmit = async () => {
@@ -80,7 +83,7 @@ export default function Editor({ modalData, setModalData }: props) {
       recTags: tagArr,
       siteId: 1,
       title: form.getFieldValue('title'),
-      updatedAt: null,
+      updatedAt: Date.now(),
       view: 0,
       visitedAt: initialValues.visitedAt,
       visitedWith: form.getFieldValue('visitedWith'),
@@ -88,7 +91,15 @@ export default function Editor({ modalData, setModalData }: props) {
       writerNickName: form.getFieldValue('writerNickName'),
     };
     try {
-      await axiosSetting.patch(`/api/camplog/${initialValues.campLogId}`, body); // 리뷰내역 수정
+      await axiosSetting.patch(`/api/camplog/${initialValues.campLogId}`, {
+        ...body,
+      }),
+        {
+          headers: {
+            Authorization: access_token,
+            'Content-Type': 'application/json',
+          },
+        }; // 리뷰내역 수정
 
       setModalData({ visible: false, data: {} });
     } catch (error: any) {
@@ -98,7 +109,7 @@ export default function Editor({ modalData, setModalData }: props) {
   return (
     <Modal
       title={`상세정보`}
-      visible={true}
+      open={true}
       closable={false}
       maskClosable={false}
       width={'80%'}
@@ -165,7 +176,7 @@ export default function Editor({ modalData, setModalData }: props) {
         </div>
         <Row>
           {initialValues.recTags!.map((item: any, idx: number) => (
-            <Col span={2} offset={1}>
+            <Col span={2} offset={1} key={idx}>
               <Form.Item
                 label={`태그${idx + 1}`}
                 required

@@ -28,39 +28,54 @@ interface Props extends WithRouterProps {
 
 const { Header, Content, Footer, Sider }: LayoutProps = Layout;
 // const { SubMenu } = item;
-const menuItems: MenuProps['items'] = [
-  {
-    label: <Link href='/userInfo'>회원관리</Link>,
-    key: '/userInfo',
-  },
-  {
-    label: <Link href='/userService'>회원서비스</Link>,
-    key: '/userService',
-  },
-  {
-    label: <Link href='/camp'>캠핑장 관리</Link>,
-    key: '/camp',
-  },
-  {
-    label: <Link href='/camplog'>캠프로그</Link>,
-    key: '/camplog',
-  },
-  {
-    label: <Link href='/tag'>추천태그</Link>,
-    key: '/tag',
-  },
-];
 
 export default function MenuLayout(props: React.PropsWithChildren<Props>) {
+  const member = localStorage.getItem('member');
+  const menuItems: MenuProps['items'] =
+    member === '주인'
+      ? [
+          {
+            label: <Link href='/camp'>캠핑장 관리</Link>,
+            key: '/camp',
+          },
+          // {
+          //   label: <Link href='/미정'>미정</Link>,
+          //   key: '/미정',
+          // },
+        ]
+      : [
+          {
+            label: <Link href='/userInfo'>회원관리</Link>,
+            key: '/userInfo',
+          },
+          // {
+          //   label: <Link href='/camp'>캠핑장 관리</Link>,
+          //   key: '/camp',
+          // },
+          {
+            label: <Link href='/camplog'>캠프로그</Link>,
+            key: '/camplog',
+          },
+          {
+            label: <Link href='/tag'>추천태그</Link>,
+            key: '/tag',
+          },
+        ];
+
   const [current, setCurrent] = useState('/');
   const router = useRouter();
   const [jwt, setJwt] = useState('');
   const onMenu: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);
+    localStorage.setItem('page', e.key);
+    router.push(e.key);
   };
   useEffect(() => {
-    if (jwt === '') {
-      router.push('/login');
+    const page = localStorage.getItem('page');
+    // console.log(page, 'page');
+    if (page) {
+      setCurrent(page);
+      // router.push(page);
       return;
     }
     const localStorageData: any = localStorage.getItem('jwt');

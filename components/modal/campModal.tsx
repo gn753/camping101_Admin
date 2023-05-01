@@ -56,20 +56,25 @@ export default function TagModal({ modalData, setModalData }: props) {
   const [initialValues, setInitialValues] = useState({
     ...modalData.data,
   });
+  const userJwt: any = localStorage.getItem('jwt');
+  const { access_token, refresh_token } = JSON.parse(userJwt);
+  console.log(access_token);
   console.log(initialValues, '상담1');
   const onSubmit = async () => {
-    // let tagArr: string[] = [];
-    // initialValues.recTags!.forEach((element: string, idx: number) => {
-    //   const tagArrData = form.getFieldValue(['recTags', `${idx}`]);
-    //   tagArr.push(tagArrData);
-    // });
-    // console.log(tagArr, 'tagArr');
-
     const body = {
       campLogId: form.getFieldValue('campLogId'),
     };
     try {
-      await axiosSetting.patch(`/api/camp/${initialValues.campId}`, body); // 리뷰내역 수정
+      await axiosSetting.put(
+        `/api/camp`,
+        { ...body },
+        {
+          headers: {
+            Authorization: access_token,
+            'Content-Type': 'application/json',
+          },
+        }
+      ); // 리뷰내역 수정
 
       setModalData({ visible: false, data: {} });
     } catch (error: any) {
@@ -79,7 +84,7 @@ export default function TagModal({ modalData, setModalData }: props) {
   return (
     <Modal
       title={`상세정보`}
-      visible={true}
+      open={true}
       closable={false}
       maskClosable={false}
       width={'80%'}
@@ -120,7 +125,7 @@ export default function TagModal({ modalData, setModalData }: props) {
         </Row>
 
         <Row>
-          <Col span={24}>
+          <Col span={11}>
             <Form.Item
               label='오픈 시즌'
               required
@@ -128,6 +133,71 @@ export default function TagModal({ modalData, setModalData }: props) {
               name={['openSeason']}
             >
               <Input placeholder='openSeason' />
+            </Form.Item>
+          </Col>
+          <Col span={11} offset={2}>
+            <Form.Item
+              label='이미지'
+              required
+              tooltip='이미지 입니다'
+              name={['firstImage']}
+            >
+              <Input placeholder='firstImage' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <div style={{ fontSize: '17px', fontWeight: '700' }}>지도</div>
+        <Row>
+          <Col span={7}>
+            <Form.Item
+              label='주소'
+              required
+              tooltip='주소 입니다'
+              name={['location', 'addr1']}
+            >
+              <Input placeholder='주소' />
+            </Form.Item>
+          </Col>
+          <Col span={7} offset={1}>
+            <Form.Item
+              label='상세주소'
+              required
+              tooltip='상세주소 입니다'
+              name={['location', 'addr2']}
+            >
+              <Input placeholder='상세 주소' />
+            </Form.Item>
+          </Col>
+          <Col span={7} offset={1}>
+            <Form.Item
+              label='지명'
+              required
+              tooltip='지명 입니다'
+              name={['location', 'environment']}
+            >
+              <Input placeholder='상세 주소' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={10} offset={1}>
+            <Form.Item
+              label='latitude'
+              required
+              tooltip='latitude 입니다'
+              name={['location', 'latitude']}
+            >
+              <Input placeholder='latitude' />
+            </Form.Item>
+          </Col>
+          <Col span={10} offset={1}>
+            <Form.Item
+              label='longitude'
+              required
+              tooltip='longitude 입니다'
+              name={['location', 'longitude']}
+            >
+              <Input placeholder='longitude' />
             </Form.Item>
           </Col>
         </Row>

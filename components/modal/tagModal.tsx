@@ -1,42 +1,18 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import {
-  Form,
-  Input,
-  Select,
-  Row,
-  Col,
-  message,
-  Modal,
-  Tabs,
-  Table,
-} from 'antd';
+import { Form, Input, Select, Row, Col, Modal, Tabs, Table } from 'antd';
 import { axiosSetting } from 'api/api';
 import moment from 'moment';
+import axios from 'axios';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
 const { Column } = Table;
 const { TextArea } = Input;
 type DATA = {
-  campLogId: string;
+  recTagId: number;
   createdAt: string;
-  description: string | null;
-  image: string;
-  image1: string;
-  image2: string;
-  image3: string;
-  image4: string;
-  image5: string;
-  like: number;
-  recTags: string[] | [];
-  siteId: number;
-  title: string;
-  updatedAt: number | null;
-  view: number;
-  visitedAt: string;
-  visitedWith: string;
-  writerEmail: string;
-  writerNickName: string;
+  useYn: boolean;
+  name: string;
 };
 interface props {
   modalData: {
@@ -57,48 +33,41 @@ export default function TagModal({ modalData, setModalData }: props) {
     ...modalData.data,
   });
   console.log(initialValues, '상담1');
-  const [tag, setTag] = useState(initialValues.recTags);
+  const userJwt: any = localStorage.getItem('jwt');
+  const { access_token, refresh_token } = JSON.parse(userJwt);
   const onSubmit = async () => {
-    let tagArr: string[] = [];
-    initialValues.recTags!.forEach((element: string, idx: number) => {
-      const tagArrData = form.getFieldValue(['recTags', `${idx}`]);
-      tagArr.push(tagArrData);
-    });
-    console.log(tagArr, 'tagArr');
-
     const body = {
-      campLogId: form.getFieldValue('campLogId'),
-      createdAt: initialValues.createdAt,
-      description: null,
-      image: initialValues.image,
-      image1: initialValues.image1,
-      image2: initialValues.image2,
-      image3: initialValues.image3,
-      image4: initialValues.image4,
-      image5: initialValues.image5,
-      like: 0,
-      recTags: tagArr,
-      siteId: 1,
-      title: form.getFieldValue('title'),
-      updatedAt: null,
-      view: 0,
-      visitedAt: initialValues.visitedAt,
-      visitedWith: form.getFieldValue('visitedWith'),
-      writerEmail: form.getFieldValue('writerEmail'),
-      writerNickName: form.getFieldValue('writerNickName'),
+      name: form.getFieldValue('name'),
+      userYn: form.getFieldValue('useYn'),
     };
-    try {
-      await axiosSetting.patch(`/api/camplog/${initialValues.campLogId}`, body); // 리뷰내역 수정
+    console.log(body, 'body');
 
+    try {
+      const testUrl = `/api/admin/rectag?name=${body.name}&userYn=${body.userYn}`;
+      // console.log(testUrl, 'url');
+      await axiosSetting.patch(
+        testUrl,
+        {
+          name: body.name,
+          userYn: body.userYn,
+        },
+        {
+          headers: {
+            accept: '*/*',
+            // 'Content-Type': 'application/json',
+            Authorization: access_token,
+          },
+        }
+      ); // 리뷰내역 수정
       setModalData({ visible: false, data: {} });
     } catch (error: any) {
-      message.error(error);
+      console.log(error);
     }
   };
   return (
     <Modal
       title={`상세정보`}
-      visible={true}
+      open={true}
       closable={false}
       maskClosable={false}
       width={'80%'}
@@ -119,12 +88,12 @@ export default function TagModal({ modalData, setModalData }: props) {
         <Row>
           <Col span={11}>
             <Form.Item
-              label='campLogId'
+              label='recTagId'
               required
-              tooltip='campLogId입니다'
-              name={['campLogId']}
+              tooltip='recTagId'
+              name={['recTagId']}
             >
-              <Input placeholder='campLogId 입력해주세요' readOnly={true} />
+              <Input placeholder='recTagId 입력해주세요' readOnly={true} />
             </Form.Item>
           </Col>
           <Col span={11} offset={2}>
@@ -141,63 +110,25 @@ export default function TagModal({ modalData, setModalData }: props) {
         <Row>
           <Col span={11}>
             <Form.Item
-              label='닉네임'
+              label='태그 이름'
               required
-              tooltip='닉네임를 입력해주세요'
-              name={['writerNickName']}
+              tooltip='태그 이름를 입력해주세요'
+              name={['name']}
             >
-              <Input placeholder='닉네임를 입력해주세요' />
+              <Input placeholder='태그이름을 입력해주세요' />
             </Form.Item>
           </Col>
           <Col span={11} offset={2}>
             <Form.Item
-              label='이메일'
+              label='태그 상태'
               required
-              tooltip='이메일 입니다'
-              name={['writerEmail']}
+              tooltip='태그 상태 입니다'
+              name={['useYn']}
             >
-              <Input placeholder='학원 주소를 입력해주세요' readOnly={true} />
-            </Form.Item>
-          </Col>
-        </Row>
-        <div>
-          <span style={{ color: '#ff4d4f' }}>* </span>태그 영역
-        </div>
-        <Row>
-          {initialValues.recTags!.map((item: any, idx: number) => (
-            <Col span={2} offset={1}>
-              <Form.Item
-                label={`태그${idx + 1}`}
-                required
-                tooltip='리뷰 태그입니다'
-                name={['recTags', `${idx}`]}
-              >
-                <Input placeholder='태그' />
-              </Form.Item>
-            </Col>
-          ))}
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              label='타이틀'
-              required
-              tooltip='title 입니다'
-              name={['title']}
-            >
-              <Input placeholder='title' />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              label='내용'
-              required
-              tooltip='description 입니다'
-              name='description'
-            >
-              <TextArea placeholder='상담내용 입니다' />
+              <Select>
+                <Option value={true}>활성화</Option>
+                <Option value={false}>비 활성화</Option>
+              </Select>
             </Form.Item>
           </Col>
         </Row>

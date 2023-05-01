@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import { isLoginAtom } from 'atom/loginAtom';
 import Login from './login';
 import Layout from '../components/layouts/Layout';
+import { IlocalProps } from 'types';
 // const Layout = dynamic(() => import('components/layouts/Layout'), {
 //   ssr: false,
 // });
@@ -19,6 +20,10 @@ function App({ Component, pageProps }: AppProps) {
   const [jwt, setJwt] = useState(null);
 
   useEffect(() => {
+    const page = localStorage.getItem('page');
+    if (page) {
+      router.push(page);
+    }
     if (jwt === null) {
       router.push('/login');
     }
@@ -30,7 +35,7 @@ function App({ Component, pageProps }: AppProps) {
     <RecoilRoot>
       <ThemeProvider theme={theme}>
         <Global styles={global} />
-        {jwt === null ? (
+        {!jwt ? (
           <Component {...pageProps} jwt={jwt} />
         ) : (
           <Layout router={undefined} jwt={jwt}>
