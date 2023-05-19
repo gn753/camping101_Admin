@@ -20,6 +20,13 @@ function App({ Component, pageProps }: AppProps) {
   const [jwt, setJwt] = useState(null);
 
   useEffect(() => {
+    const page = localStorage.getItem('page');
+    if (page) {
+      router.push(page);
+    }
+    if (jwt === null) {
+      router.push('/login');
+    }
     const localStorageData: any = localStorage.getItem('jwt');
     setJwt(localStorageData);
   }, [jwt, router, router.pathname]);
