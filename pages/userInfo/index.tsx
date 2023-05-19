@@ -2,25 +2,16 @@ import styled from '@emotion/styled';
 import { Table, Button, Row, message } from 'antd';
 import { axiosSetting } from 'api/api';
 import moment from 'moment';
-import axios from 'axios';
-import { Suspense, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Editor from '../../components/modal/userModal';
 import Loading from 'components/loading';
-import {
-  useRecoilRefresher_UNSTABLE,
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil';
-import { postingId, postingIdSelector } from 'atom/loginAtom';
+
 const { Column } = Table;
 type CrudProps = {
   type: string;
   data: {};
 };
 export default function UserInfo() {
-  const userJwt = useRecoilValue(postingIdSelector);
-  const userReJwt = useRecoilRefresher_UNSTABLE(postingIdSelector);
-  console.log(userJwt, 'jwt');
   const [memberType, setMemberType] = useState('일반');
   const CRUD = async ({ type, data }: CrudProps) => {};
   const [select, setSelect] = useState([]);
@@ -28,31 +19,22 @@ export default function UserInfo() {
   const [userData, setUserData] = useState([]);
   // console.log(userData);
   const [isData, setIsData] = useState(false);
-  useEffect(() => {
-    api();
-    if (userJwt) return;
-    userReJwt();
-    console.log('도달');
-
-    // userReJwt();
-  }, [modalData, memberType]);
-
-  const api = async () => {
+  const api = useCallback(async () => {
     const member = memberType === '일반' ? 'CUSTOMER' : 'OWNER';
-    console.log('호출');
 
     try {
       const res = await axiosSetting.get(
         `api/admin/member?memberType=${member}`
-        //&pageNumber=1&recordSize=1
       );
       setUserData(res.data.content);
       setIsData(true);
     } catch (err) {
       console.log(err, '옴?');
     }
-  };
-
+  }, [memberType]);
+  useEffect(() => {
+    api();
+  }, [modalData, memberType, api]);
   return (
     <>
       {!isData && <Loading />}

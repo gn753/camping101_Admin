@@ -2,12 +2,6 @@ import { Table, Button, Row } from 'antd';
 import { axiosSetting } from 'api/api';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  useRecoilRefresher_UNSTABLE,
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil';
-import { postingId, postingIdSelector } from 'atom/loginAtom';
 import CreateModal from '../../components/modal/createOwnerCampModal';
 import { useRouter } from 'next/router';
 import Loading from 'components/loading';
@@ -26,27 +20,24 @@ interface Props {
 const OwnerCamp = () => {
   const router = useRouter();
   const [campData, setCampData] = useState([]);
-  // console.log(campData);
-  const userJwt: any = useRecoilValue(postingIdSelector);
-  // console.log(userJwt);
+
   const [create, setCreate] = useState({ visible: false, num_id: {} });
-  const userReJwt = useRecoilRefresher_UNSTABLE(postingIdSelector);
+  const [userId, setUserId] = useState<number>(0);
   // const userJwt: any = localStorage.getItem('jwt');
   // const { access_token } = JSON.parse(userJwt);
   const [modalData, setModalData] = useState<{}>({ visible: false, data: {} });
   const [isData, setIsData] = useState<boolean>(false);
-  const api = async () => {
+  const api = useCallback(async () => {
     try {
-      // const getNum = await axiosSetting.get('/api/member');
+      const getNum = await axiosSetting.get('/api/member');
 
-      // console.log(getNum);
+      const id = getNum.data.member_id;
+      console.log(id, 'id');
 
-      // const id = getNum.data.member_id;
-
-      // const res: Props =
+      setUserId(id);
       await axiosSetting
         .get(
-          `/api/camp/owner/${userJwt.member_id}`,
+          `/api/camp/owner/${id}`,
           {
             headers: {
               accept: '*/*',
@@ -64,8 +55,7 @@ const OwnerCamp = () => {
     } catch (err) {
       console.log(err, '옴?');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  };
+  }, []);
   // console.log(create);
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
@@ -75,10 +65,9 @@ const OwnerCamp = () => {
       router.push('/login');
     }
     api();
-    if (userJwt) return;
-    userReJwt();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [api]);
   return (
     <>
       {create.visible && (
@@ -89,11 +78,7 @@ const OwnerCamp = () => {
       {!isData && <Loading />}
       {isData && (
         <>
-          <button
-            onClick={() =>
-              setCreate({ visible: true, num_id: userJwt.member_id })
-            }
-          >
+          <button onClick={() => setCreate({ visible: true, num_id: userId })}>
             생성
           </button>
           <Row justify='start' style={{ marginBottom: 16 }}></Row>
