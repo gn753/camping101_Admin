@@ -3,7 +3,7 @@ import { Table, Button, Row, message } from 'antd';
 import { axiosSetting } from 'api/api';
 import moment from 'moment';
 import axios from 'axios';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import Editor from '../../components/modal/userModal';
 import Loading from 'components/loading';
 import {
@@ -28,6 +28,19 @@ export default function UserInfo() {
   const [userData, setUserData] = useState([]);
   // console.log(userData);
   const [isData, setIsData] = useState(false);
+  const api = useCallback(async () => {
+    const member = memberType === '일반' ? 'CUSTOMER' : 'OWNER';
+
+    try {
+      const res = await axiosSetting.get(
+        `api/admin/member?memberType=${member}`
+      );
+      setUserData(res.data.content);
+      setIsData(true);
+    } catch (err) {
+      console.log(err, '옴?');
+    }
+  }, [memberType]);
   useEffect(() => {
     api();
     if (userJwt) return;
@@ -35,24 +48,7 @@ export default function UserInfo() {
     console.log('도달');
 
     // userReJwt();
-  }, [modalData, memberType]);
-
-  const api = async () => {
-    const member = memberType === '일반' ? 'CUSTOMER' : 'OWNER';
-    console.log('호출');
-
-    try {
-      const res = await axiosSetting.get(
-        `api/admin/member?memberType=${member}`
-        //&pageNumber=1&recordSize=1
-      );
-      setUserData(res.data.content);
-      setIsData(true);
-    } catch (err) {
-      console.log(err, '옴?');
-    }
-  };
-
+  }, [modalData, memberType, api, userJwt, userReJwt]);
   return (
     <>
       {!isData && <Loading />}

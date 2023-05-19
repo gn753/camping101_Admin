@@ -35,15 +35,12 @@ const OwnerCamp = () => {
   // const { access_token } = JSON.parse(userJwt);
   const [modalData, setModalData] = useState<{}>({ visible: false, data: {} });
   const [isData, setIsData] = useState<boolean>(false);
-  const api = async () => {
+  const api = useCallback(async () => {
     try {
       // const getNum = await axiosSetting.get('/api/member');
 
-      // console.log(getNum);
-
       // const id = getNum.data.member_id;
 
-      // const res: Props =
       await axiosSetting
         .get(
           `/api/camp/owner/${userJwt.member_id}`,
@@ -64,8 +61,7 @@ const OwnerCamp = () => {
     } catch (err) {
       console.log(err, '옴?');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  };
+  }, [userJwt.member_id]);
   // console.log(create);
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
@@ -77,8 +73,7 @@ const OwnerCamp = () => {
     api();
     if (userJwt) return;
     userReJwt();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [api, router, userJwt, userReJwt]);
   return (
     <>
       {create.visible && (
