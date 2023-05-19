@@ -1,1 +1,0 @@
-(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[197],{6141:function(n,u,t){(window.__NEXT_P=window.__NEXT_P||[]).push(["/404",function(){return t(5838)}])},5838:function(n,u,t){"use strict";t.r(u);var _=t(5944);t(7294);let e=()=>(0,_.tZ)("div",{children:"404입니다"});u.default=e}},function(n){n.O(0,[774,888,179],function(){return n(n.s=6141)}),_N_E=n.O()}]);

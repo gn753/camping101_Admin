@@ -1,1 +1,0 @@
-(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[833],{5822:function(n,t,u){(window.__NEXT_P=window.__NEXT_P||[]).push(["/reservation",function(){return u(9789)}])},9789:function(n,t,u){"use strict";u.r(t);var e=u(5944);u(7294);let _=()=>(0,e.tZ)("div",{children:"예약"});t.default=_}},function(n){n.O(0,[774,888,179],function(){return n(n.s=5822)}),_N_E=n.O()}]);

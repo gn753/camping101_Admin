@@ -1,14 +1,7 @@
 {
   "/_app": "pages/_app.js",
-  "/404": "pages/404.js",
-  "/camp": "pages/camp.js",
-  "/camplog": "pages/camplog.js",
-  "/": "pages/index.js",
-  "/login": "pages/login.js",
-  "/ownerCamp": "pages/ownerCamp.js",
-  "/reservation": "pages/reservation.js",
-  "/tag": "pages/tag.js",
-  "/userInfo": "pages/userInfo.js",
   "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js"
+  "/_document": "pages/_document.js",
+  "/404": "pages/404.js",
+  "/ownerCamp": "pages/ownerCamp.js"
 }
