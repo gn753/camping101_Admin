@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Menu, MenuProps } from 'antd';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import Example from 'features/Admin/components/Example';
 import Container from './Container/index';
 import { withRouter, NextRouter } from 'next/router';
 import { WithRouterProps } from 'next/dist/client/with-router';
@@ -35,8 +34,8 @@ export default function MenuLayout(props: React.PropsWithChildren<Props>) {
     member === '주인'
       ? [
           {
-            label: <Link href='/camp'>캠핑장 관리</Link>,
-            key: '/camp',
+            label: <Link href='/ownerCamp'>주인캠핑장 관리</Link>,
+            key: '/ownerCamp',
           },
           // {
           //   label: <Link href='/미정'>미정</Link>,
@@ -48,10 +47,10 @@ export default function MenuLayout(props: React.PropsWithChildren<Props>) {
             label: <Link href='/userInfo'>회원관리</Link>,
             key: '/userInfo',
           },
-          // {
-          //   label: <Link href='/camp'>캠핑장 관리</Link>,
-          //   key: '/camp',
-          // },
+          {
+            label: <Link href='/camp'>캠핑장 관리</Link>,
+            key: '/camp',
+          },
           {
             label: <Link href='/camplog'>캠프로그</Link>,
             key: '/camplog',

@@ -61,9 +61,14 @@ export default function TagModal({ modalData, setModalData }: props) {
   console.log(access_token);
   console.log(initialValues, '상담1');
   const onSubmit = async () => {
-    const body = {
-      campLogId: form.getFieldValue('campLogId'),
-    };
+    const body = [
+      {
+        campAuthId: '',
+        campAuthStatus: form.getFieldValue('campAuthStatus'),
+        campId: form.getFieldValue('campId'),
+        campName: form.getFieldValue('campName'),
+      },
+    ];
     try {
       await axiosSetting.put(
         `/api/camp`,
@@ -71,7 +76,7 @@ export default function TagModal({ modalData, setModalData }: props) {
         {
           headers: {
             Authorization: access_token,
-            'Content-Type': 'application/json',
+            'Content-Type': '*',
           },
         }
       ); // 리뷰내역 수정
@@ -143,6 +148,21 @@ export default function TagModal({ modalData, setModalData }: props) {
               name={['firstImage']}
             >
               <Input placeholder='firstImage' />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={11}>
+            <Form.Item
+              label='view 상태'
+              required
+              tooltip='상태 입니다'
+              name={['manageStatus']}
+            >
+              <Select>
+                <Option value={'AUTHORIZED'}>활성화</Option>
+                <Option value={'UNAUTHORIZED'}>비활성화</Option>
+              </Select>
             </Form.Item>
           </Col>
         </Row>

@@ -56,7 +56,7 @@ export default function CreateCampModal({ modalData, setModalData }: props) {
     };
     try {
       await axiosSetting.post(
-        `/api/admin`,
+        `/api/camp`,
         { ...body },
         {
           headers: {

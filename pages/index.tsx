@@ -5,8 +5,8 @@ import { axiosSetting } from 'api/api';
 const redirectTo = '/';
 
 const Index = () => {
+  const router = useRouter();
   if (typeof window !== 'undefined') {
-    const router = useRouter();
     router.push(redirectTo);
   }
   return <>메인입니다</>;

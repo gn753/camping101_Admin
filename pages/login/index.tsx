@@ -3,8 +3,9 @@ import styled from '@emotion/styled';
 import { axiosSetting } from '../../api/api';
 import axios from 'axios';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { SetterOrUpdater } from 'recoil';
+import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
+import { postingId } from '../../atom/loginAtom';
 type LoginType = {
   email: string;
   password: string;
@@ -17,13 +18,14 @@ interface JwtProps {
 const url = 'api/signin/mail';
 const Login = ({ jwt }: JwtProps) => {
   const router = useRouter();
+  const [userJwt, setUserJwt] = useRecoilState(postingId);
   const [selectedType, setSelectedType] = useState<string>('');
   useEffect(() => {
     if (!jwt) return;
     if (jwt) {
       router.push('/');
     }
-  }, [jwt]);
+  }, [jwt, router]);
   const onSubmit = async (body: LoginType) => {
     if (jwt) return;
     if (selectedType === '') return alert('주인 혹은 관리자를 선택해주세요');
@@ -38,24 +40,30 @@ const Login = ({ jwt }: JwtProps) => {
     //const url = `api/signin/mail?email=${loginData.email}&memberType=${loginData.memberType}&password=${loginData.password}`;
     await axiosSetting
       .post(url, body)
-      .then((e: any) => {
-        console.log(e, '성공');
+      .then(async (e: any) => {
         const jwtData = {
           access_token: e.headers.access_token,
           refresh_token: e.headers.refresh_token,
         };
         localStorage.setItem('jwt', JSON.stringify(jwtData));
         localStorage.setItem('member', selectedType);
-        // localStorage.setItem('re_jwt', e.headers.refresh_token);
+        const getNum = await axiosSetting.get('/api/member', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: e.headers.access_token,
+          },
+        });
+
+        setUserJwt(getNum.data);
         router.push('/');
       })
       .catch((e) => {
-        console.log(e);
-
         router.push('/login');
+        if (e.response.status === 401) {
+          alert('아이디 혹은 비밀번호를 다시한번 확인해주세요');
+        }
       });
   };
-
   const hanldeClick = (text: '주인' | '관리자') => {
     setSelectedType(text);
   };

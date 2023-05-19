@@ -22,7 +22,7 @@ interface Props {
   // };
 }
 
-const index = () => {
+const TagPage = () => {
   const [commentData, setCommebtData] = useState([]);
   const [onlyCommentData, setOnlyCommebtData] = useState([]);
   const [isData, setIsData] = useState(false);
@@ -147,7 +147,8 @@ const index = () => {
     </>
   );
 };
-export default index;
+export default TagPage;
+
 const BtnBox = styled.span`
   button {
     cursor: pointer;

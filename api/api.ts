@@ -2,7 +2,7 @@ import axios from 'axios';
 export const axiosSetting = axios.create({
   headers: {
     'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': '69420',
+    // 'ngrok-skip-browser-warning': '69420',
   },
 });
 
@@ -12,8 +12,9 @@ axiosSetting.interceptors.request.use(function (config) {
   const user: any = localStorage.getItem('jwt');
 
   if (!user) {
-    config.headers.access_token = null;
-    config.headers.refresh_token = null;
+    // config.headers.access_token = null;
+    // config.headers.refresh_token = null;
+    config.headers.Authorization = null;
     return config;
   }
   if (config.data) {
@@ -23,8 +24,8 @@ axiosSetting.interceptors.request.use(function (config) {
   }
   const { access_token, refresh_token } = JSON.parse(user);
   config.headers.Authorization = access_token;
-  config.headers['access_token'] = access_token;
-  config.headers['refresh_token'] = refresh_token;
+  // config.headers['access_token'] = access_token;
+  // config.headers['refresh_token'] = refresh_token;
 
   return config;
 });
@@ -38,9 +39,11 @@ axiosSetting.interceptors.response.use(
     // if (error.error.response.status === 401) {
     //   localStorage.removeItem('jwt');
     // }
+
     if (error.response.status === 403) {
+      let user: any = null;
       try {
-        const user: any = localStorage.getItem('jwt');
+        user = localStorage.getItem('jwt');
         const originalRequest = error.config;
         const { refresh_token } = JSON.parse(user); //로컬스토리지에 있는 리프레쉬 토큰
         if (!refresh_token) {
@@ -59,7 +62,7 @@ axiosSetting.interceptors.response.use(
         if (data) {
           const { access_token } = data.data;
           originalRequest.headers.Authorization = access_token;
-          originalRequest.headers['access_token'] = access_token;
+          // originalRequest.headers['access_token'] = access_token;
           // originalRequest.headers['Content-Type'] = 'application/json';
           const jwtData = {
             access_token: access_token,

@@ -29,15 +29,14 @@ function App({ Component, pageProps }: AppProps) {
     }
     const localStorageData: any = localStorage.getItem('jwt');
     setJwt(localStorageData);
-  }, [router.pathname]);
+  }, [jwt, router, router.pathname]);
 
   return (
     <RecoilRoot>
       <ThemeProvider theme={theme}>
         <Global styles={global} />
-        {!jwt ? (
-          <Component {...pageProps} jwt={jwt} />
-        ) : (
+        {!jwt && <Component {...pageProps} jwt={jwt} />}
+        {jwt && (
           <Layout router={undefined} jwt={jwt}>
             <Component {...pageProps} jwt={jwt} />
           </Layout>
