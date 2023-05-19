@@ -20,9 +20,19 @@ function App({ Component, pageProps }: AppProps) {
   const [jwt, setJwt] = useState(null);
 
   useEffect(() => {
+    const page = localStorage.getItem('page');
     const localStorageData: any = localStorage.getItem('jwt');
     setJwt(localStorageData);
-  }, [jwt, router, router.pathname]);
+    if (page) {
+      router.push(page);
+      return;
+    }
+    if (localStorageData === null) {
+      router.push('/login');
+      return;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwt, router.asPath]);
 
   return (
     <RecoilRoot>
