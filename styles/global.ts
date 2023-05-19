@@ -1,4 +1,4 @@
-import { css } from "@emotion/react";
+import { css } from '@emotion/react';
 
 export const global = css`
   * {
@@ -112,7 +112,7 @@ export const global = css`
     height: 100%; /* ✔️ Height on the parent will fix this issue. */
   }
   body {
-    margin-top: 50px;
+    margin-top: 0px;
   }
   html,
   body,

@@ -1,18 +1,23 @@
-import Head from "next/head";
-import Layout from "components/layouts/Layout";
-import Header from "components/layouts/Header";
-import Footer from "components/layouts/Footer";
-import Admin from "features/Admin";
+import { useRouter } from 'next/router';
 
+import { useEffect } from 'react';
+import { axiosSetting } from 'api/api';
+const redirectTo = '/';
 
-function HomePage() {
-  return (
-    <>
-      <Head>ds</Head>
+const Index = () => {
+  const router = useRouter();
+  if (typeof window !== 'undefined') {
+    router.push(redirectTo);
+  }
+  return <>메인입니다</>;
+};
 
-      <Layout header={<Header />} footer={<Footer />} main={<Admin />} />
-    </>
-  );
-}
+// Index.getInitialProps = async ({ ctx }: any) => {
+//   if (ctx && ctx.req) {
+//     ctx.res.statusCode = 302;
+//     ctx.res.setHeader('Location', redirectTo);
+//   }
+//   return { props: '' };
+// };
 
-export default HomePage;
+export default Index;

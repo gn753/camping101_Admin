@@ -12,3 +12,7 @@ export type ReactNode =
 export type Props = {
   children: ReactNode;
 };
+
+interface IlocalProps {
+  setTest: () => void;
+}
